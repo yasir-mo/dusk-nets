@@ -137,7 +137,7 @@ button:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
       <p>Every over sets a chase. Reach the target in six balls and the next over asks for more. Lose three wickets or fall short and the innings ends.</p>
       <dl class="rules">
         <dt>Time</dt><dd>Tap as the ball reaches the bat.</dd>
-        <dt>Aim</dt><dd>Tap left for the leg side, middle for straight, right for the off side. Keys: ← ↑ → or A W D.</dd>
+        <dt>Aim</dt><dd>Swipe the way you want to hit it, like taking a free kick: up for straight, up-left for the leg side, up-right for the off side. Or tap left, middle or right. Keys: ← ↑ → or A W D.</dd>
         <dt>Perfect</dt><dd>Clears the rope for six.</dd>
         <dt>Good</dt><dd>Runs along the ground. Find a gap between fielders for four.</dd>
         <dt>Streak</dt><dd>Three boundaries in a row and you're on fire.</dd>
@@ -485,6 +485,7 @@ function press(aim, at) {
   const err = t - del.ideal, ae = Math.abs(err), pw = G.fire ? .075 : .05;
   const q = ae < pw ? 'perfect' : ae < .105 ? 'good' : ae < .17 ? 'edge' : 'miss';
   startSwing(aim, q);
+  lastShot = { aim, q }; aimFlash = { a: aim, t: rt };
   if (mode === 'play') showGauge(err, q);
   if (q === 'miss') return;
   del.played = true;
@@ -813,14 +814,42 @@ $('copy').addEventListener('click', e => {
   const done = ok => { $('copyHint').textContent = ok ? 'Copied. Send it to whoever you are challenging.' : txt; };
   try { navigator.clipboard.writeText(txt).then(() => done(true), () => done(false)); } catch (err) { done(false); }
 });
+// Touch: timing comes from the moment the finger lands, direction from the swipe.
+// A touch that barely moves is a tap and aims by where it landed.
+let touch = null, swipeFx = null, lastShot = null, aimFlash = null;
+const SWIPE_PX = 22, HOLD_S = .2;
+const nowClock = () => clock + (performance.now() / 1000 - lastReal) * ts;
+function swipeAim(dx, dy) {
+  if (dy > 0) return Math.abs(dx) < 8 ? 0 : Math.sign(dx) * 1.45; // downward swipes go square
+  return clamp(Math.atan2(dx, -dy) * 1.1, -1.45, 1.45);
+}
+function commitTouch(aim) {
+  const t = touch.t; swipeFx = { pts: touch.pts, t: rt }; touch = null;
+  press(aim, t);
+}
 cv.addEventListener('pointerdown', e => {
   e.preventDefault();
   if (mode === 'demo' || mode === 'end') return start();
-  const r = cv.getBoundingClientRect();
-  press(aimFromX(e.clientX - r.left), clock + (performance.now() / 1000 - lastReal) * ts);
+  const r = cv.getBoundingClientRect(), x = e.clientX - r.left;
+  if (e.pointerType === 'mouse') return press(aimFromX(x), nowClock());
+  touch = { id: e.pointerId, x0: e.clientX, y0: e.clientY, t: nowClock(), rt0: performance.now() / 1000, tapAim: aimFromX(x), pts: [[x, e.clientY - r.top]] };
+  try { cv.setPointerCapture(e.pointerId); } catch (err) {}
 });
-cv.addEventListener('pointermove', e => { if (e.pointerType === 'mouse') { const r = cv.getBoundingClientRect(); aimPreview = aimFromX(e.clientX - r.left); } });
-cv.addEventListener('pointerleave', () => { aimPreview = null; });
+cv.addEventListener('pointermove', e => {
+  const r = cv.getBoundingClientRect();
+  if (e.pointerType === 'mouse') { aimPreview = aimFromX(e.clientX - r.left); return; }
+  if (!touch || e.pointerId !== touch.id) return;
+  touch.pts.push([e.clientX - r.left, e.clientY - r.top]);
+  const dx = e.clientX - touch.x0, dy = e.clientY - touch.y0;
+  if (Math.hypot(dx, dy) >= SWIPE_PX) commitTouch(swipeAim(dx, dy));
+});
+cv.addEventListener('pointerup', e => {
+  if (!touch || e.pointerId !== touch.id) return;
+  const dx = e.clientX - touch.x0, dy = e.clientY - touch.y0;
+  commitTouch(Math.hypot(dx, dy) >= 10 ? swipeAim(dx, dy) : touch.tapAim);
+});
+cv.addEventListener('pointercancel', () => { touch = null; });
+cv.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') aimPreview = null; });
 addEventListener('keydown', e => {
   const k = e.code;
   const aims = { ArrowLeft: -1.05, KeyA: -1.05, ArrowUp: 0, KeyW: 0, Space: 0, ArrowRight: 1.05, KeyD: 1.05 };
@@ -856,7 +885,9 @@ function frame() {
         if (del.autoAt === undefined) { del.autoAt = del.ideal + (HASH === 'mega' ? 0 : HASH === 'lose' ? .3 : gauss() * .16); del.autoAim = rnd(-1.3, 1.3); }
         if (clock >= del.autoAt) press(del.autoAim, del.autoAt);
       }
-      if (!del.played && !resolved) {
+      // a finger that is down but undecided holds the ball back briefly, then counts as a tap
+      if (touch && performance.now() / 1000 - touch.rt0 > HOLD_S) commitTouch(touch.tapAim);
+      if (!del.played && !resolved && !touch) {
         if (u >= U_STUMPS && del.onStumps) { phase = 'result'; breakStumps(); resolve({ wicket: true, label: 'Bowled', shot: del.swung ? 'Swing and a miss' : 'Through the gate' }); }
         else if (clock >= del.ideal + .19) { phase = 'result'; resolve({ runs: 0, label: del.swung ? 'Beaten' : 'Dot ball', shot: del.swung ? 'Swing and a miss' : 'Left alone' }); }
       }
@@ -907,6 +938,20 @@ function frame() {
   drawBatter();
   if (ball && ball.p && !ball.done) drawBall(ball.p.x, ball.p.d, ball.p.h, ball.fx);
   drawParticles(rdt);
+  // swipe streak and a brief aim line so touch players can see where they sent it
+  if (aimFlash && rt - aimFlash.t < .6 && mode === 'play') {
+    const k = 1 - (rt - aimFlash.t) / .6, a = P(OX, OD, 0), b = toWorld(aimFlash.a, ropeDist(aimFlash.a)), pb = P(b.x, b.d, 0);
+    ctx.setLineDash([5, 7]); ctx.strokeStyle = 'rgba(255,236,190,' + (.45 * k) + ')'; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(a[0], a[1]); ctx.lineTo(pb[0], pb[1]); ctx.stroke(); ctx.setLineDash([]);
+  }
+  const streak = touch ? { pts: touch.pts, k: 1 } : swipeFx && rt - swipeFx.t < .45 ? { pts: swipeFx.pts, k: 1 - (rt - swipeFx.t) / .45 } : null;
+  if (streak && streak.pts.length > 1) {
+    ctx.save(); ctx.globalCompositeOperation = 'lighter'; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    ctx.shadowColor = 'rgba(255,200,120,.9)'; ctx.shadowBlur = 16;
+    ctx.strokeStyle = 'rgba(255,230,180,' + (.7 * streak.k) + ')'; ctx.lineWidth = 6 * streak.k + 1;
+    ctx.beginPath(); streak.pts.forEach((q, i) => i ? ctx.lineTo(q[0], q[1]) : ctx.moveTo(q[0], q[1])); ctx.stroke();
+    ctx.restore();
+  }
   for (const f of flies) {
     f.p += rdt * f.v; f.x += Math.sin(f.p * .7) * rdt * .01; f.y += Math.cos(f.p * .5) * rdt * .006;
     if (f.x < 0) f.x += 1; if (f.x > 1) f.x -= 1;
@@ -925,7 +970,7 @@ function frame() {
   if (flash > .01) { ctx.fillStyle = 'rgba(255,248,230,' + flash + ')'; ctx.fillRect(0, 0, W, H); flash *= Math.pow(.004, rdt); }
   requestAnimationFrame(frame);
 }
-window.__dusk = () => ({ mode, phase, G: G && Object.assign({}, G), clock, ideal: del && del.ideal });
+window.__dusk = () => ({ mode, phase, G: G && Object.assign({}, G), clock, ideal: del && del.ideal, releaseAt: del && del.releaseAt, lastShot, ballA: ball && ball.a });
 newGame(true);
 requestAnimationFrame(frame);
 })();

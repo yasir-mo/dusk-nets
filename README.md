@@ -5,7 +5,7 @@ A one-tap cricket batting game under the floodlights. Every over sets a run chas
 **Play:** https://yasir-mo.github.io/dusk-nets/
 
 - **Time:** tap as the ball reaches the bat.
-- **Aim:** tap left for the leg side, middle for straight, right for the off side (keys: ← ↑ → or A W D).
+- **Aim:** on a phone, swipe the way you want to hit it (up = straight, up-left = leg side, up-right = off side). Or tap left, middle or right. Keys: ← ↑ → or A W D.
 - **Perfect** timing clears the rope for six. **Good** timing runs along the ground, so find the gaps for four.
 - Three boundaries in a row and you're **on fire**.
 
