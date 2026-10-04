@@ -147,7 +147,7 @@ button:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
         <dt>Aim</dt><dd>Swipe the way you want to hit it, like taking a free kick: up for straight, up-left for the leg side, up-right for the off side. Or tap left, middle or right. Keys: ← ↑ → or A W D.</dd>
         <dt>Perfect</dt><dd>Clears the rope for six.</dd>
         <dt>Good</dt><dd>Runs along the ground. Find a gap between fielders for four.</dd>
-        <dt>Venues</dt><dd>Nine grounds, from Golden Dusk to Among the Stars. Runs and wickets reset at each one.</dd>
+        <dt>Venues</dt><dd>Eleven grounds in a random order, from a beach to a city arena to the stars. Runs and wickets reset at each one.</dd>
         <dt>Streak</dt><dd>Three boundaries in a row and you're on fire.</dd>
       </dl>
       <button class="go" id="go" type="button">Take guard</button>
@@ -222,33 +222,50 @@ function mix(c1, c2, t) { return 'rgb(' + c1.map((v, i) => Math.round(lerp(v, c2
 const THEMES = [
   { name: 'Golden Dusk', night: .25, sky: [[38, 44, 92], [120, 82, 140], [238, 140, 120], [250, 196, 130]], sunA: 1, sun: [255, 200, 130], moon: 0,
     grass: [[54, 104, 70], [46, 92, 64]], stand: [40, 34, 60], pitch: [196, 170, 120], rope: [240, 235, 220],
-    fShirt: [168, 205, 245], fPants: [30, 60, 110], bowl: [200, 215, 235], bShirt: [26, 64, 46], bPants: [215, 215, 205], helmet: [20, 52, 38], bat: [220, 194, 144], ball: [255, 250, 240], weather: 'fireflies', scale: 1 },
+    fShirt: [168, 205, 245], fPants: [30, 60, 110], bowl: [200, 215, 235], bShirt: [26, 64, 46], bPants: [215, 215, 205], helmet: [20, 52, 38], bat: [220, 194, 144], ball: [255, 250, 240], weather: 'fireflies', scale: 1, scape: 'village' },
   { name: 'Floodlit Night', night: 1, sky: [[6, 8, 24], [16, 20, 50], [34, 32, 70], [60, 46, 80]], sunA: 0, sun: [255, 200, 130], moon: .9,
     grass: [[34, 82, 56], [28, 70, 48]], stand: [12, 13, 28], pitch: [160, 146, 112], rope: [240, 235, 220],
-    fShirt: [250, 214, 60], fPants: [30, 70, 150], bowl: [250, 214, 60], bShirt: [28, 52, 140], bPants: [28, 52, 140], helmet: [16, 30, 90], bat: [220, 194, 144], ball: [255, 250, 240], weather: 'fireflies', scale: 1 },
+    fShirt: [250, 214, 60], fPants: [30, 70, 150], bowl: [250, 214, 60], bShirt: [28, 52, 140], bPants: [28, 52, 140], helmet: [16, 30, 90], bat: [220, 194, 144], ball: [255, 250, 240], weather: 'fireflies', scale: 1, scape: 'bowl', beams: .6 },
   { name: 'Monsoon', night: .5, sky: [[50, 60, 72], [76, 90, 100], [108, 122, 128], [138, 148, 150]], sunA: 0, sun: [220, 220, 210], moon: 0,
     grass: [[40, 100, 76], [32, 88, 66]], stand: [34, 40, 48], pitch: [124, 110, 90], rope: [235, 235, 230],
-    fShirt: [150, 34, 56], fPants: [235, 235, 235], bowl: [150, 34, 56], bShirt: [238, 238, 240], bPants: [238, 238, 240], helmet: [24, 34, 70], bat: [220, 194, 144], ball: [210, 36, 46], weather: 'rain', scale: 1.04 },
+    fShirt: [150, 34, 56], fPants: [235, 235, 235], bowl: [150, 34, 56], bShirt: [238, 238, 240], bPants: [238, 238, 240], helmet: [24, 34, 70], bat: [220, 194, 144], ball: [210, 36, 46], weather: 'rain', scale: 1.04, scape: 'hills' },
   { name: 'Blossom Park', night: .05, sky: [[124, 146, 214], [232, 174, 204], [255, 204, 212], [255, 228, 216]], sunA: .8, sun: [255, 236, 220], moon: 0,
     grass: [[98, 152, 92], [86, 140, 82]], stand: [124, 92, 122], pitch: [216, 192, 152], rope: [255, 250, 245],
-    fShirt: [246, 244, 238], fPants: [246, 244, 238], bowl: [246, 244, 238], bShirt: [250, 248, 240], bPants: [250, 248, 240], helmet: [30, 74, 52], bat: [232, 206, 152], ball: [196, 30, 42], weather: 'petals', scale: .96 },
-  { name: 'Desert Moon', night: .85, sky: [[14, 16, 48], [42, 36, 94], [100, 64, 112], [176, 112, 100]], sunA: 0, sun: [255, 200, 130], moon: 1,
-    grass: [[70, 112, 72], [60, 100, 64]], stand: [62, 42, 44], pitch: [214, 182, 132], rope: [250, 230, 200],
-    fShirt: [24, 136, 96], fPants: [18, 80, 60], bowl: [24, 136, 96], bShirt: [214, 74, 46], bPants: [60, 30, 30], helmet: [120, 30, 24], bat: [226, 196, 140], ball: [255, 250, 240], weather: 'dust', scale: 1 },
+    fShirt: [246, 244, 238], fPants: [246, 244, 238], bowl: [246, 244, 238], bShirt: [250, 248, 240], bPants: [250, 248, 240], helmet: [30, 74, 52], bat: [232, 206, 152], ball: [196, 30, 42], weather: 'petals', scale: .96, scape: 'blossom', towers: 0 },
+  { name: 'Desert Moon', night: .8, sky: [[14, 16, 48], [44, 36, 94], [110, 70, 112], [196, 126, 104]], sunA: 0, sun: [255, 200, 130], moon: 1,
+    grass: [[150, 114, 84], [140, 106, 78]], stand: [58, 36, 40], pitch: [92, 150, 104], rope: [255, 236, 200],
+    fShirt: [24, 136, 96], fPants: [18, 80, 60], bowl: [24, 136, 96], bShirt: [214, 74, 46], bPants: [250, 240, 225], helmet: [120, 30, 24], bat: [226, 196, 140], ball: [255, 250, 240], weather: 'dust', scale: 1, scape: 'dunes', beams: .5, sand: 1 },
+  { name: 'Beach Cricket', night: .12, sky: [[72, 112, 176], [246, 168, 132], [255, 198, 150], [255, 222, 178]], sunA: 1, sun: [255, 214, 150], moon: 0,
+    grass: [[232, 204, 156], [224, 194, 146]], stand: [54, 36, 46], pitch: [206, 176, 128], rope: [255, 120, 90],
+    fShirt: [255, 140, 64], fPants: [40, 112, 172], bowl: [255, 140, 64], bShirt: [252, 252, 248], bPants: [30, 152, 170], helmet: [250, 200, 64], bat: [232, 208, 154], ball: [236, 232, 60], weather: 'gulls', scale: .96, scape: 'beach', towers: 0, sand: 1 },
+  { name: 'Metro Arena', night: .92, sky: [[8, 10, 28], [24, 22, 58], [62, 42, 84], [118, 74, 104]], sunA: 0, sun: [255, 200, 130], moon: 0,
+    grass: [[44, 118, 74], [36, 104, 64]], stand: [18, 18, 34], pitch: [192, 172, 132], rope: [255, 255, 255],
+    fShirt: [232, 58, 64], fPants: [30, 30, 44], bowl: [232, 58, 64], bShirt: [36, 98, 210], bPants: [36, 98, 210], helmet: [20, 42, 120], bat: [220, 194, 144], ball: [255, 250, 240], weather: 'none', scale: 1, scape: 'city', beams: 1 },
   { name: 'Ice Cricket', night: .12, sky: [[128, 168, 222], [180, 210, 240], [220, 234, 250], [242, 246, 252]], sunA: .9, sun: [255, 250, 236], moon: 0,
     grass: [[228, 236, 246], [214, 226, 240]], stand: [92, 102, 134], pitch: [186, 202, 220], rope: [204, 60, 72],
-    fShirt: [204, 44, 56], fPants: [40, 40, 62], bowl: [204, 44, 56], bShirt: [30, 42, 86], bPants: [30, 42, 86], helmet: [20, 22, 44], bat: [220, 194, 144], ball: [255, 80, 170], weather: 'snow', scale: 1 },
+    fShirt: [204, 44, 56], fPants: [40, 40, 62], bowl: [204, 44, 56], bShirt: [30, 42, 86], bPants: [30, 42, 86], helmet: [20, 22, 44], bat: [220, 194, 144], ball: [255, 80, 170], weather: 'snow', scale: 1, scape: 'alps' },
   { name: 'Aurora', night: 1, sky: [[4, 10, 24], [10, 30, 50], [16, 46, 62], [30, 60, 72]], sunA: 0, sun: [255, 200, 130], moon: .45,
     grass: [[28, 72, 62], [22, 62, 54]], stand: [8, 16, 24], pitch: [140, 142, 124], rope: [200, 255, 230],
-    fShirt: [160, 100, 230], fPants: [44, 24, 86], bowl: [160, 100, 230], bShirt: [24, 130, 118], bPants: [230, 240, 236], helmet: [16, 90, 82], bat: [220, 194, 144], ball: [240, 255, 250], weather: 'aurora', scale: 1.05 },
+    fShirt: [160, 100, 230], fPants: [44, 24, 86], bowl: [160, 100, 230], bShirt: [24, 130, 118], bPants: [230, 240, 236], helmet: [16, 90, 82], bat: [220, 194, 144], ball: [240, 255, 250], weather: 'aurora', scale: 1.05, scape: 'pines', towers: 0 },
   { name: 'Neon City', night: 1, sky: [[20, 4, 42], [62, 10, 84], [160, 30, 122], [255, 100, 124]], sunA: 0, sun: [255, 120, 160], moon: 0,
     grass: [[32, 12, 54], [26, 10, 46]], stand: [16, 4, 30], pitch: [70, 36, 100], rope: [0, 240, 255],
     fShirt: [0, 230, 255], fPants: [20, 20, 64], bowl: [0, 230, 255], bShirt: [255, 46, 164], bPants: [44, 12, 64], helmet: [255, 46, 164], bat: [255, 228, 120], ball: [255, 176, 40], weather: 'neon', scale: 1.1 },
   { name: 'Among the Stars', night: 1, sky: [[2, 2, 10], [12, 8, 34], [30, 14, 62], [52, 26, 84]], sunA: 0, sun: [255, 200, 130], moon: 0,
-    grass: [[32, 32, 64], [26, 26, 56]], stand: [8, 6, 20], pitch: [112, 102, 152], rope: [220, 200, 255],
-    fShirt: [222, 226, 242], fPants: [120, 124, 152], bowl: [222, 226, 242], bShirt: [250, 200, 60], bPants: [250, 200, 60], helmet: [250, 200, 60], bat: [255, 216, 92], ball: [180, 240, 255], weather: 'cosmic', scale: 1.15 }
+    grass: [[74, 72, 92], [68, 66, 86]], stand: [8, 6, 20], pitch: [120, 116, 140], rope: [220, 200, 255],
+    fShirt: [222, 226, 242], fPants: [120, 124, 152], bowl: [222, 226, 242], bShirt: [250, 200, 60], bPants: [250, 200, 60], helmet: [250, 200, 60], bat: [255, 216, 92], ball: [180, 240, 255], weather: 'cosmic', scale: 1.15, scape: 'craters', towers: 0 }
 ];
-const venueName = lvl => THEMES[(lvl - 1) % THEMES.length].name + (lvl > THEMES.length ? ' II' : '');
+THEMES.forEach(t => { t.scape = t.scape || 'stands'; if (t.towers === undefined) t.towers = 1; if (t.beams === undefined) t.beams = 0; if (t.sand === undefined) t.sand = 0; });
+function shuffleBag(avoid) {
+  const a = THEMES.map((_, i) => i);
+  for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
+  if (a[0] === avoid) [a[0], a[1]] = [a[1], a[0]];
+  return a;
+}
+function venueAt(lvl) {
+  while (G.order.length < lvl) G.order.push(...shuffleBag(G.order[G.order.length - 1]));
+  return G.order[lvl - 1];
+}
+const venueName = lvl => THEMES[venueAt(lvl)].name + (lvl > THEMES.length ? ' II' : '');
 const ease2 = t => t < .5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
 const rgb = a => 'rgb(' + Math.round(a[0]) + ',' + Math.round(a[1]) + ',' + Math.round(a[2]) + ')';
 const K = a => rgb(a.map(v => v * (1 - .32 * night)));   // kit colour, dimmed at night
@@ -258,7 +275,7 @@ function setTheme(i) { themeFrom = pal; themeTo = THEMES[i % THEMES.length]; the
 function updPal() {
   const k = ease2(clamp((rt - themeT0) / 2.4, 0, 1)), p = {};
   for (const key in themeTo) p[key] = blendVal(themeFrom[key], themeTo[key], k);
-  p.k = k; p.wFrom = themeFrom.weather; p.wTo = themeTo.weather; pal = p; night = p.night;
+  p.k = k; p.wFrom = themeFrom.weather; p.wTo = themeTo.weather; p.sFrom = themeFrom.scape || 'stands'; p.sTo = themeTo.scape; pal = p; night = p.night;
 }
 function wAlpha(kind) { if (pal.wFrom === pal.wTo) return pal.wTo === kind ? 1 : 0; return pal.wTo === kind ? pal.k : pal.wFrom === kind ? 1 - pal.k : 0; }
 const wx = Array.from({ length: 140 }, () => ({ x: Math.random(), y: Math.random(), v: rnd(.6, 1.2), p: rnd(0, 6), s: rnd(.5, 1.5) }));
@@ -334,6 +351,14 @@ function frontFx(rdt) {
     ctx.fillStyle = 'rgba(255,214,160,' + (.35 * a) + ')';
     for (let i = 0; i < 50; i++) { const w = wx[i], x = ((w.x + rt * .015 * w.v) % 1) * W, y = (.45 + ((w.y + rt * .01 * w.v) % 1) * .55) * H; ctx.beginPath(); ctx.arc(x, y, .8 + w.s, 0, 7); ctx.fill(); }
   }
+  a = wAlpha('gulls');
+  if (a > 0) {
+    ctx.strokeStyle = 'rgba(60,40,50,' + (.7 * a) + ')'; ctx.lineWidth = 1.5; ctx.lineCap = 'round';
+    for (let i = 0; i < 7; i++) {
+      const w = wx[i], x = ((w.x + rt * .018 * w.v) % 1) * W, y = (.12 + w.y * .4) * horizon + Math.sin(rt * .7 + w.p) * 6, f = Math.sin(rt * 5 * w.v + w.p) * 4, s = 5 + w.s * 4;
+      ctx.beginPath(); ctx.moveTo(x - s, y - f); ctx.quadraticCurveTo(x - s * .4, y - 3, x, y); ctx.quadraticCurveTo(x + s * .4, y - 3, x + s, y - f); ctx.stroke();
+    }
+  }
   a = wAlpha('fireflies') + .35 * wAlpha('aurora');
   if (a > 0) for (const f of flies) {
     f.p += rdt * f.v; f.x += Math.sin(f.p * .7) * rdt * .01; f.y += Math.cos(f.p * .5) * rdt * .006;
@@ -344,6 +369,244 @@ function frontFx(rdt) {
     ctx.fillStyle = fg; ctx.fillRect(fx - 8, fy - 8, 16, 16);
   }
 }
+// ---------- skylines: what sits on the horizon at each venue ----------
+// Far layers fade toward the sky colour (atmospheric perspective), near layers stay dark.
+const mixA = (a, b, t) => a.map((v, i) => lerp(v, b[i], t));
+const hash2 = (i, j) => { const n = Math.sin(i * 127.1 + j * 311.7) * 43758.5453; return n - Math.floor(n); };
+const towersFar = Array.from({ length: 26 }, (_, i) => ({ x: i / 26 + hash2(i, 1) * .02, w: .03 + hash2(i, 2) * .03, h: .08 + hash2(i, 3) * .1 }));
+const towersNear = Array.from({ length: 16 }, (_, i) => ({ x: i / 16 + hash2(i, 4) * .03, w: .04 + hash2(i, 5) * .035, h: .1 + hash2(i, 6) * .16, spire: hash2(i, 7) > .75 }));
+function sAlpha(kind) { if (pal.sFrom === pal.sTo) return pal.sTo === kind ? 1 : 0; return pal.sTo === kind ? pal.k : pal.sFrom === kind ? 1 - pal.k : 0; }
+function drawStands(a, tall) {
+  let x = 0, i = 0;
+  const col = rgb(pal.stand), fl = Math.max(0, night - .15);
+  ctx.globalAlpha = a;
+  while (x < W) {
+    const s = stands[i++ % stands.length], hh = s.h * H * (tall ? .5 : .35);
+    ctx.fillStyle = col; ctx.fillRect(x, horizon - hh, s.w * W + 1, hh + 2);
+    if (fl > .1) {
+      for (let k = 0; k < 6; k++) {
+        const fx = x + (k + .5) * s.w * W / 6, fy = horizon - hh * (.2 + .12 * k);
+        // phone lights: most glow softly, a few flash like cameras
+        const flash = tall ? Math.pow(Math.max(0, Math.sin(rt * (1.3 + s.l) + i * 7.1 + k * 3.3)), 60) : 0;
+        ctx.fillStyle = flash > .05 ? 'rgba(255,255,255,' + flash + ')' : 'rgba(255,240,210,' + (.28 * fl * s.l) + ')';
+        const r = flash > .05 ? 1.5 + flash * 2.5 : 1.5; ctx.fillRect(fx - r / 2, fy - r / 2, r, r);
+      }
+    }
+    x += s.w * W;
+  }
+  ctx.globalAlpha = 1;
+}
+function drawCity(a) {
+  ctx.globalAlpha = a;
+  const far = rgb(mixA(pal.stand, pal.sky[2], .55)), near = rgb(mixA(pal.stand, pal.sky[2], .18));
+  ctx.fillStyle = far;
+  for (const b of towersFar) ctx.fillRect(b.x * W, horizon - b.h * H * 1.35, b.w * W, b.h * H * 1.35);
+  for (const [i, b] of towersNear.entries()) {
+    const bx = b.x * W, bw = b.w * W, bh = b.h * H * 1.3, top = horizon - bh;
+    ctx.fillStyle = near; ctx.fillRect(bx, top, bw, bh);
+    if (b.spire) { ctx.fillRect(bx + bw / 2 - 1, top - bh * .18, 2, bh * .18); ctx.fillStyle = 'rgba(255,70,70,' + (.5 + .5 * Math.sin(rt * 3 + i)) + ')'; ctx.fillRect(bx + bw / 2 - 1.5, top - bh * .18 - 2, 3, 3); }
+    const cols = Math.max(2, Math.floor(bw / 6)), rows = Math.floor(bh / 8);
+    for (let r = 1; r < rows; r++) for (let c = 0; c < cols; c++) {
+      const h = hash2(i * 31 + c, r);
+      if (h < .42) { ctx.fillStyle = h < .06 ? 'rgba(150,210,255,.75)' : 'rgba(255,214,140,' + (.35 + h) + ')'; ctx.fillRect(bx + 2 + c * (bw - 4) / cols, top + r * 8, Math.max(1.5, (bw - 4) / cols - 2), 3); }
+    }
+  }
+  ctx.globalAlpha = 1;
+  drawStands(a, true);
+  // light pollution haze on the horizon
+  const hz = ctx.createLinearGradient(0, horizon - H * .12, 0, horizon);
+  hz.addColorStop(0, 'rgba(255,170,120,0)'); hz.addColorStop(1, 'rgba(255,170,120,' + (.12 * a) + ')');
+  ctx.fillStyle = hz; ctx.fillRect(0, horizon - H * .12, W, H * .12);
+}
+function palm(x, base, h, lean, a) {
+  const sway = Math.sin(rt * .9 + x) * .04;
+  const tx = x + lean * h + sway * h, ty = base - h;
+  ctx.strokeStyle = ctx.fillStyle = rgb(pal.stand); ctx.globalAlpha = a;
+  ctx.lineCap = 'round'; ctx.lineWidth = Math.max(3, h * .045);
+  ctx.beginPath(); ctx.moveTo(x, base); ctx.quadraticCurveTo(x + lean * h * .2, base - h * .6, tx, ty); ctx.stroke();
+  ctx.lineWidth = Math.max(2, h * .03);
+  for (let f = 0; f < 7; f++) {
+    const ang = -Math.PI / 2 + (f - 3) * .48 + sway * 2, len = h * (.42 + .08 * Math.cos(f * 1.7));
+    const ex = tx + Math.cos(ang) * len, ey = ty + Math.sin(ang) * len * .55 + len * .35;
+    ctx.beginPath(); ctx.moveTo(tx, ty); ctx.quadraticCurveTo(tx + Math.cos(ang) * len * .55, ty + Math.sin(ang) * len * .7 - len * .12, ex, ey); ctx.stroke();
+  }
+  ctx.beginPath(); ctx.arc(tx, ty + 2, h * .035, 0, 7); ctx.fill();
+  ctx.globalAlpha = 1;
+}
+function drawBeach(a) {
+  const seaTop = horizon - H * .045;
+  ctx.globalAlpha = a;
+  const sg = ctx.createLinearGradient(0, seaTop, 0, horizon);
+  sg.addColorStop(0, rgb(mixA([40, 110, 150], pal.sky[3], .25))); sg.addColorStop(1, rgb(mixA([70, 160, 175], pal.sky[3], .15)));
+  ctx.fillStyle = sg; ctx.fillRect(0, seaTop, W, horizon - seaTop + 1);
+  // distant island, hazy
+  ctx.fillStyle = rgb(mixA(pal.stand, pal.sky[3], .6));
+  ctx.beginPath(); ctx.moveTo(W * .08, seaTop + 1); ctx.quadraticCurveTo(W * .2, seaTop - H * .05, W * .34, seaTop + 1); ctx.fill();
+  // sun glitter on the water
+  const sx = W * .72;
+  for (let i = 0; i < 18; i++) {
+    const y = seaTop + (i + .5) * (horizon - seaTop) / 18, wv = Math.sin(rt * 2 + i * 1.7) * .5 + .5, w = (6 + i * 2.2) * (.5 + wv);
+    ctx.fillStyle = 'rgba(255,236,190,' + (.5 * wv * pal.sunA) + ')'; ctx.fillRect(sx - w / 2 + Math.sin(rt + i) * 4, y, w, 1.2);
+  }
+  // waves breaking on the shore
+  ctx.strokeStyle = 'rgba(255,255,255,.45)'; ctx.lineWidth = 1;
+  for (let i = 0; i < 3; i++) { const y = horizon - 2 - i * 3 + Math.sin(rt * 1.2 + i) * 1; ctx.beginPath(); ctx.moveTo(0, y); for (let x = 0; x <= W; x += 20) ctx.lineTo(x, y + Math.sin(x * .03 + rt * 2 + i) * 1.2); ctx.stroke(); }
+  ctx.globalAlpha = 1;
+  [[-2.6, 3.0, '#ff6b5a'], [-1.3, 3.4, '#3fb6c8'], [1.1, 3.3, '#ffd23f'], [2.7, 2.9, '#ff8fb1']].forEach(([ux, ud, col]) => {
+    const [px, py, s2] = P(ux, ud, 0), r = .16 * s2 * U, hgt = .2 * s2 * U;
+    ctx.globalAlpha = a; ctx.strokeStyle = '#5a4636'; ctx.lineWidth = Math.max(1, r * .08);
+    ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(px, py - hgt); ctx.stroke();
+    ctx.fillStyle = col; ctx.beginPath(); ctx.ellipse(px, py - hgt, r, r * .55, 0, Math.PI, 0); ctx.fill();
+    ctx.fillStyle = 'rgba(255,255,255,.75)';
+    for (let k = -1; k <= 1; k += 2) { ctx.beginPath(); ctx.moveTo(px, py - hgt - r * .55); ctx.lineTo(px + k * r * .33, py - hgt); ctx.lineTo(px + k * r * .62, py - hgt); ctx.closePath(); ctx.fill(); }
+    ctx.globalAlpha = 1;
+  });
+  palm(W * .05, horizon + 4, H * .3, .12, a); palm(W * .12, horizon + 2, H * .2, -.08, a);
+  palm(W * .9, horizon + 4, H * .27, -.14, a); palm(W * .97, horizon + 6, H * .34, -.05, a);
+}
+function drawDunes(a) {
+  const layers = [[.6, .17, 1.3, .0035], [.36, .12, 2.1, .0055], [.12, .075, 3.3, .008]];
+  ctx.globalAlpha = a;
+  layers.forEach(([haze, hgt, ph, fr]) => {
+    const ridge = [];
+    for (let x = 0; x <= W + 10; x += 8) ridge.push([x, horizon - H * hgt * (.5 + .5 * Math.abs(Math.sin(x * fr + ph)) * (.6 + .4 * Math.sin(x * fr * .41 + ph * 2)))]);
+    ctx.fillStyle = rgb(mixA(mixA(pal.stand, [150, 104, 74], .55), pal.sky[2], haze));
+    ctx.beginPath(); ctx.moveTo(0, horizon + 1); ridge.forEach(q => ctx.lineTo(q[0], q[1])); ctx.lineTo(W, horizon + 1); ctx.closePath(); ctx.fill();
+    // moonlight catching the crest
+    ctx.strokeStyle = 'rgba(255,224,190,' + (.22 * (1 - haze)) + ')'; ctx.lineWidth = 1.2;
+    ctx.beginPath(); ridge.forEach((q, k) => k ? ctx.lineTo(q[0], q[1]) : ctx.moveTo(q[0], q[1])); ctx.stroke();
+  });
+  ctx.globalAlpha = 1;
+}
+// layered ridges: far layers take on the sky colour, near layers keep the venue's own tone
+function ridges(a, near, layers, opts) {
+  opts = opts || {};
+  ctx.globalAlpha = a;
+  layers.forEach(([haze, hgt, ph, fr]) => {
+    const pts = [];
+    for (let x = 0; x <= W + 10; x += 8) {
+      let v;
+      if (opts.sharp) { const t = x * fr + ph, tri = 1 - 2 * Math.abs((t % 1) - .5), t2 = x * fr * 2.3 + ph * 3, tri2 = 1 - 2 * Math.abs((t2 % 1) - .5); v = .25 + .55 * tri + .2 * tri2; }
+      else v = .5 + .5 * Math.sin(x * fr + ph) * (.6 + .4 * Math.sin(x * fr * .41 + ph * 2));
+      pts.push([x, horizon - H * hgt * v]);
+    }
+    const col = mixA(near, pal.sky[2], haze);
+    ctx.fillStyle = rgb(col);
+    ctx.beginPath(); ctx.moveTo(0, horizon + 1); pts.forEach(q => ctx.lineTo(q[0], q[1])); ctx.lineTo(W, horizon + 1); ctx.closePath(); ctx.fill();
+    if (opts.snow) {
+      ctx.save(); ctx.beginPath(); ctx.moveTo(0, horizon + 1); pts.forEach(q => ctx.lineTo(q[0], q[1])); ctx.lineTo(W, horizon + 1); ctx.closePath(); ctx.clip();
+      ctx.fillStyle = rgb(mixA([250, 252, 255], pal.sky[2], haze * .6)); ctx.fillRect(0, 0, W, horizon - H * hgt * .62);
+      ctx.restore();
+    }
+    if (opts.rim) { ctx.strokeStyle = 'rgba(' + opts.rim + ',' + (.25 * (1 - haze)) + ')'; ctx.lineWidth = 1.2; ctx.beginPath(); pts.forEach((q, k) => k ? ctx.lineTo(q[0], q[1]) : ctx.moveTo(q[0], q[1])); ctx.stroke(); }
+  });
+  ctx.globalAlpha = 1;
+}
+function trees(a, kind, col, n, hMin, hMax, seed) {
+  ctx.globalAlpha = a; ctx.fillStyle = rgb(col);
+  for (let i = 0; i < n; i++) {
+    const x = (i + hash2(i, seed) * .8) / n * W, h = H * lerp(hMin, hMax, hash2(i, seed + 1)), w = h * (kind === 'pine' ? .45 : .8);
+    const by = horizon + 1;
+    if (kind === 'pine') {
+      for (let t = 0; t < 3; t++) { const ty = by - h * (.25 + t * .25), tw = w * (1 - t * .25); ctx.beginPath(); ctx.moveTo(x - tw / 2, ty + h * .3); ctx.lineTo(x, ty - h * .2); ctx.lineTo(x + tw / 2, ty + h * .3); ctx.closePath(); ctx.fill(); }
+      ctx.fillRect(x - 1, by - h * .12, 2, h * .12);
+    } else {
+      ctx.fillRect(x - 1.5, by - h * .4, 3, h * .4);
+      ctx.beginPath(); ctx.arc(x, by - h * .65, w * .36, 0, 7); ctx.arc(x - w * .25, by - h * .5, w * .28, 0, 7); ctx.arc(x + w * .26, by - h * .52, w * .3, 0, 7); ctx.fill();
+      if (kind === 'blossom') { ctx.fillStyle = 'rgba(255,236,242,.55)'; for (let k = 0; k < 6; k++) { ctx.beginPath(); ctx.arc(x + (hash2(i, k) - .5) * w * .7, by - h * (.45 + hash2(k, i) * .35), 1.6, 0, 7); ctx.fill(); } ctx.fillStyle = rgb(col); }
+    }
+  }
+  ctx.globalAlpha = 1;
+}
+function pavilion(a) {
+  const x = W * .24, w = Math.max(70, W * .13), h = H * .07, by = horizon + 1, top = by - h;
+  const wall = rgb(mixA([236, 226, 206], pal.sky[3], .25).map(v => v * (1 - .45 * night))), roof = rgb(mixA([120, 52, 46], pal.stand, .3));
+  ctx.globalAlpha = a;
+  ctx.fillStyle = wall; ctx.fillRect(x, top, w, h);
+  ctx.fillStyle = roof; ctx.beginPath(); ctx.moveTo(x - 6, top); ctx.lineTo(x + w / 2, top - h * .55); ctx.lineTo(x + w + 6, top); ctx.closePath(); ctx.fill();
+  ctx.fillStyle = 'rgba(255,214,150,' + (.25 + .6 * night) + ')';
+  for (let k = 0; k < 5; k++) ctx.fillRect(x + w * (.1 + k * .17), top + h * .35, w * .09, h * .3);
+  ctx.fillStyle = wall; ctx.beginPath(); ctx.arc(x + w / 2, top - h * .2, h * .16, 0, 7); ctx.fill();
+  ctx.strokeStyle = roof; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.moveTo(x + w / 2, top - h * .2); ctx.lineTo(x + w / 2, top - h * .3); ctx.moveTo(x + w / 2, top - h * .2); ctx.lineTo(x + w / 2 + h * .08, top - h * .2); ctx.stroke();
+  // sightscreen behind the bowler's arm
+  const [sx, sy, s2] = P(0, 3.15, 0), sw = .9 * s2 * U, sh = .3 * s2 * U;
+  ctx.fillStyle = rgb([244, 242, 236].map(v => v * (1 - .4 * night))); ctx.fillRect(sx - sw / 2, sy - sh, sw, sh);
+  ctx.globalAlpha = 1;
+}
+function bowl(a) {
+  drawStands(a, true);
+  ctx.globalAlpha = a;
+  // roof canopy with a ring of lights
+  const top = horizon - H * .19;
+  ctx.fillStyle = rgb(mixA(pal.stand, [0, 0, 0], .2));
+  ctx.beginPath(); ctx.moveTo(0, top - H * .05); ctx.quadraticCurveTo(cx, top + H * .03, W, top - H * .05); ctx.lineTo(W, top - H * .015); ctx.quadraticCurveTo(cx, top + H * .065, 0, top - H * .015); ctx.closePath(); ctx.fill();
+  for (let i = 0; i < 40; i++) { const t = i / 39, x = t * W, y = (1 - t) * (1 - t) * (top - H * .015) + 2 * (1 - t) * t * (top + H * .065) + t * t * (top - H * .015); ctx.fillStyle = 'rgba(240,246,255,' + (.6 * Math.max(0, night - .2)) + ')'; ctx.fillRect(x - 1.5, y - 1, 3, 2); }
+  ctx.globalAlpha = 1;
+}
+function craters(a) {
+  ridges(a, [70, 68, 88], [[.5, .05, 1, .006], [.2, .03, 2.4, .011]], { rim: '230,230,255' });
+  ctx.globalAlpha = a;
+  for (let i = 0; i < 9; i++) {
+    const [px, py, s2] = P((hash2(i, 21) - .5) * 8, 2.9 + hash2(i, 22) * 1.2, 0), r = (.2 + hash2(i, 23) * .3) * s2 * U;
+    if (px < -r || px > W + r) continue;
+    ctx.fillStyle = 'rgba(30,28,48,.35)'; ctx.beginPath(); ctx.ellipse(px, py, r, r * .28, 0, 0, 7); ctx.fill();
+    ctx.strokeStyle = 'rgba(200,200,230,.25)'; ctx.lineWidth = 1; ctx.beginPath(); ctx.ellipse(px, py - r * .03, r, r * .28, 0, Math.PI, 0); ctx.stroke();
+  }
+  // home planet hanging in the black
+  const ex = W * .16, ey = horizon * .42, er = Math.max(14, Math.min(W, H) * .04), eg = ctx.createRadialGradient(ex - er * .3, ey - er * .3, 0, ex, ey, er);
+  eg.addColorStop(0, '#9fd3ff'); eg.addColorStop(.6, '#2f6fd0'); eg.addColorStop(1, '#0d1f4a');
+  ctx.fillStyle = eg; ctx.beginPath(); ctx.arc(ex, ey, er, 0, 7); ctx.fill();
+  ctx.fillStyle = 'rgba(120,200,120,.75)'; ctx.beginPath(); ctx.ellipse(ex - er * .25, ey - er * .1, er * .3, er * .2, .5, 0, 7); ctx.ellipse(ex + er * .3, ey + er * .25, er * .22, er * .14, -.3, 0, 7); ctx.fill();
+  ctx.globalAlpha = 1;
+}
+function drawScape2() {
+  let a;
+  if ((a = sAlpha('village')) > 0) { ridges(a, [40, 54, 50], [[.65, .06, 1.1, .005]]); trees(a, 'round', mixA([34, 52, 40], pal.sky[2], .35), 14, .05, .08, 3); trees(a, 'round', [26, 40, 32], 9, .06, .1, 9); pavilion(a); }
+  if ((a = sAlpha('bowl')) > 0) bowl(a);
+  if ((a = sAlpha('hills')) > 0) {
+    ridges(a, [36, 70, 58], [[.75, .24, .4, .0042], [.5, .16, 1.9, .006], [.22, .09, 3.1, .009]]);
+    const fog = ctx.createLinearGradient(0, horizon - H * .08, 0, horizon);
+    fog.addColorStop(0, 'rgba(200,210,215,0)'); fog.addColorStop(1, 'rgba(200,210,215,' + (.45 * a) + ')');
+    ctx.fillStyle = fog; ctx.fillRect(0, horizon - H * .08, W, H * .08);
+    drawStands(a * .9, false);
+  }
+  if ((a = sAlpha('blossom')) > 0) { trees(a, 'blossom', mixA([236, 150, 180], pal.sky[2], .4), 16, .06, .09, 5); trees(a, 'blossom', [222, 120, 156], 10, .07, .12, 13); }
+  if ((a = sAlpha('alps')) > 0) { ridges(a, [96, 112, 150], [[.6, .3, .2, .0026], [.35, .2, .7, .0038]], { sharp: true, snow: true }); trees(a, 'pine', [40, 60, 70], 22, .035, .06, 17); }
+  if ((a = sAlpha('pines')) > 0) { ridges(a, [16, 30, 40], [[.55, .12, .9, .004]]); trees(a, 'pine', mixA([10, 26, 30], pal.sky[2], .3), 30, .06, .1, 7); trees(a, 'pine', [6, 16, 20], 18, .08, .13, 19); }
+  if ((a = sAlpha('craters')) > 0) craters(a);
+}
+function drawScape() {
+  let a;
+  if ((a = sAlpha('stands')) > 0) drawStands(a, false);
+  if ((a = sAlpha('city')) > 0) drawCity(a);
+  if ((a = sAlpha('beach')) > 0) drawBeach(a);
+  if ((a = sAlpha('dunes')) > 0) drawDunes(a);
+  drawScape2();
+}
+function drawTowers() {
+  const ta = pal.towers; if (ta < .02) return;
+  const fl = Math.max(0, night - .15), col = rgb(pal.stand);
+  [.1, .9].forEach(fx => {
+    const tx = fx * W, top = horizon - H * .23;
+    ctx.globalAlpha = ta; ctx.strokeStyle = col; ctx.lineWidth = 3;
+    ctx.beginPath(); ctx.moveTo(tx, horizon); ctx.lineTo(tx, top); ctx.stroke();
+    ctx.fillStyle = col; ctx.fillRect(tx - 15, top - 8, 30, 11);
+    if (fl > 0) {
+      // volumetric beam toward the square
+      if (pal.beams > .02) {
+        const tgx = cx + (fx < .5 ? -1 : 1) * W * .08, tgy = P(0, .5, 0)[1];
+        const bg = ctx.createLinearGradient(tx, top, tgx, tgy);
+        bg.addColorStop(0, 'rgba(235,242,255,' + (.16 * pal.beams * fl) + ')'); bg.addColorStop(1, 'rgba(235,242,255,0)');
+        ctx.fillStyle = bg; ctx.beginPath(); ctx.moveTo(tx - 12, top); ctx.lineTo(tx + 12, top); ctx.lineTo(tgx + W * .16, tgy); ctx.lineTo(tgx - W * .16, tgy); ctx.closePath(); ctx.fill();
+      }
+      const lg = ctx.createRadialGradient(tx, top - 3, 0, tx, top - 3, 80);
+      lg.addColorStop(0, 'rgba(235,242,255,' + Math.min(1, fl * 1.6) + ')'); lg.addColorStop(1, 'rgba(235,242,255,0)');
+      ctx.fillStyle = lg; ctx.fillRect(tx - 80, top - 83, 160, 160);
+    }
+    ctx.globalAlpha = 1;
+  });
+}
+const moonCv = document.createElement('canvas'), moonCtx = moonCv.getContext('2d');
 let night = .25, shooting = null;
 function drawSky(rdt) {
   const g = ctx.createLinearGradient(0, 0, 0, horizon);
@@ -361,8 +624,12 @@ function drawSky(rdt) {
     const mg = ctx.createRadialGradient(mx, my, 0, mx, my, mr * 4);
     mg.addColorStop(0, 'rgba(250,246,225,' + (.25 * pal.moon) + ')'); mg.addColorStop(1, 'rgba(250,246,225,0)');
     ctx.fillStyle = mg; ctx.fillRect(mx - mr * 4, my - mr * 4, mr * 8, mr * 8);
-    ctx.globalAlpha = pal.moon; ctx.fillStyle = '#f6f1dc'; ctx.beginPath(); ctx.arc(mx, my, mr, 0, 7); ctx.fill();
-    ctx.fillStyle = rgb(pal.sky[0]); ctx.beginPath(); ctx.arc(mx + mr * .45, my - mr * .2, mr * .92, 0, 7); ctx.fill(); ctx.globalAlpha = 1;
+    const S = Math.ceil(mr * 2 + 4);
+    if (moonCv.width !== S) { moonCv.width = S; moonCv.height = S; }
+    moonCtx.globalCompositeOperation = 'source-over'; moonCtx.clearRect(0, 0, S, S);
+    moonCtx.fillStyle = '#f6f1dc'; moonCtx.beginPath(); moonCtx.arc(S / 2, S / 2, mr, 0, 7); moonCtx.fill();
+    moonCtx.globalCompositeOperation = 'destination-out'; moonCtx.beginPath(); moonCtx.arc(S / 2 + mr * .45, S / 2 - mr * .25, mr * .9, 0, 7); moonCtx.fill();
+    ctx.globalAlpha = pal.moon; ctx.drawImage(moonCv, mx - S / 2, my - S / 2); ctx.globalAlpha = 1;
   }
   if (pal.sunA > .02) {
     const sy = horizon - 20 + night * 80, c = pal.sun.map(Math.round).join(',');
@@ -388,6 +655,14 @@ function drawGround() {
     ctx.fillStyle = rgb(pal.grass[i % 2]); ctx.fillRect(0, y1, W, y2 - y1 + 1);
   }
   groundFx();
+  if (pal.sand > .02) {
+    ctx.fillStyle = 'rgba(110,80,50,' + (.22 * pal.sand) + ')';
+    for (let k = 0; k < 420; k++) {
+      const d = hash2(k, 11) * 4.2 - .15, x = (hash2(k, 12) - .5) * 9, [px, py, s2] = P(x, d, 0);
+      if (px < 0 || px > W) continue;
+      const r = Math.max(.8, 2.2 * s2); ctx.fillRect(px, py, r, r * .6);
+    }
+  }
   const fl = Math.max(0, night - .15);
   if (fl > 0) {
     const py = P(0, .6, 0)[1], pg = ctx.createRadialGradient(cx, py, 0, cx, py, W * .8);
@@ -403,25 +678,8 @@ function drawGround() {
     first ? ctx.moveTo(px, py) : ctx.lineTo(px, py); first = false;
   }
   ctx.stroke();
-  let x = 0; i = 0;
-  const standCol = rgb(pal.stand);
-  while (x < W) {
-    const s = stands[i++ % stands.length], hh = s.h * H * .35;
-    ctx.fillStyle = standCol; ctx.fillRect(x, horizon - hh, s.w * W + 1, hh + 2);
-    if (fl > .1) { ctx.fillStyle = 'rgba(255,240,210,' + (.25 * fl * s.l) + ')'; for (let k = 0; k < 4; k++) ctx.fillRect(x + (k + .5) * s.w * W / 4, horizon - hh * (.3 + .15 * k), 1.5, 1.5); }
-    x += s.w * W;
-  }
-  [.1, .9].forEach(fx => {
-    const tx = fx * W, top = horizon - H * .23;
-    ctx.strokeStyle = standCol; ctx.lineWidth = 3;
-    ctx.beginPath(); ctx.moveTo(tx, horizon); ctx.lineTo(tx, top); ctx.stroke();
-    ctx.fillStyle = standCol; ctx.fillRect(tx - 15, top - 8, 30, 11);
-    if (fl > 0) {
-      const lg = ctx.createRadialGradient(tx, top - 3, 0, tx, top - 3, 80);
-      lg.addColorStop(0, 'rgba(235,242,255,' + Math.min(1, fl * 1.6) + ')'); lg.addColorStop(1, 'rgba(235,242,255,0)');
-      ctx.fillStyle = lg; ctx.fillRect(tx - 80, top - 83, 160, 160);
-    }
-  });
+  drawScape();
+  drawTowers();
   const c = [P(-.16, 1.1, 0), P(.16, 1.1, 0), P(.16, -.14, 0), P(-.16, -.14, 0)];
   ctx.fillStyle = rgb(pal.pitch.map(v => v * (1 - .3 * night)));
   ctx.beginPath(); c.forEach((p, k) => k ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1])); ctx.fill();
@@ -593,8 +851,9 @@ let clock = 0, rt = 0, ts = 1, freezeUntil = 0, slowUntil = 0, aimPreview = null
 function newGame(demo) {
   mode = demo ? 'demo' : 'play';
   stage.classList.toggle('demo', demo);
-  G = { level: 0, chases: 0, runs: 0, wkts: 0, streak: 0, sixRun: 0, fire: false, log: [] };
-  setTheme(0);
+  G = { level: 0, chases: 0, runs: 0, wkts: 0, streak: 0, sixRun: 0, fire: false, log: [], order: [] };
+  const forced = /^v(\d+)$/.exec(HASH); if (forced) G.order = [+forced[1] % THEMES.length];
+  setTheme(venueAt(1));
   resetStumps(); ball = null; del = null; pendingNext = false;
   nextOver();
 }
@@ -740,7 +999,7 @@ function resolve(res) {
 function endBall() {
   if (G.wkts >= 3) return gameOver('All out. Three wickets down.');
   if (G.need <= 0) {
-    G.chases++; setTheme(G.chases);
+    G.chases++; setTheme(venueAt(G.level + 1));
     if (mode === 'play') { const spare = G.balls; banner('Chase won', spare ? spare + (spare === 1 ? ' ball' : ' balls') + ' to spare' : 'Off the last ball'); fireworks(spare ? 3 : 5); roar(1.2); }
     hud();
     phase = 'wait'; waitUntil = clock + (mode === 'play' ? 2.6 : 1.4); pendingNext = true; return;
@@ -755,7 +1014,7 @@ function gameOver(reason) {
   const isBest = G.chases > best.chases;
   if (isBest) { best = { chases: G.chases, venue: venueName(G.level) }; saveBest(); }
   $('reason').textContent = reason + ' At ' + venueName(G.level) + '.'; $('fRuns').textContent = G.chases; $('fOvers').textContent = venueName(G.level); $('fBest').textContent = best.chases;
-  $('venues').innerHTML = Array.from({ length: G.level }, (_, i) => { const t = THEMES[i % THEMES.length]; return '<i title="' + t.name + '" style="background:linear-gradient(' + rgb(t.sky[1]) + ',' + rgb(t.sky[3]) + ' 60%,' + rgb(t.grass[0]) + ' 60%)"></i>'; }).join('');
+  $('venues').innerHTML = Array.from({ length: G.level }, (_, i) => { const t = THEMES[venueAt(i + 1)]; return '<i title="' + t.name + '" style="background:linear-gradient(' + rgb(t.sky[1]) + ',' + rgb(t.sky[3]) + ' 60%,' + rgb(t.grass[0]) + ' 60%)"></i>'; }).join('');
   $('newbest').hidden = !isBest; $('bestHud').textContent = best.chases; $('copyHint').textContent = 'Space or tap the field to bat again';
   setTimeout(() => { const e = $('end'); e.hidden = false; requestAnimationFrame(() => e.classList.remove('gone')); endShownAt = rt; }, 1300);
 }
@@ -1023,7 +1282,7 @@ function frame() {
     if (phase === 'flight') {
       const u = (clock - del.releaseAt) / del.T;
       if (!del.bounced && u >= (.97 - del.ty.bounce) / 1.1) { del.bounced = true; thud(); }
-      const auto = mode === 'demo' || HASH === 'auto' || HASH === 'mega' || HASH === 'lose';
+      const auto = mode === 'demo' || HASH === 'auto' || HASH === 'mega' || HASH === 'lose' || /^v\d+$/.test(HASH);
       if (auto && !del.swung) {
         if (del.autoAt === undefined) { del.autoAt = del.ideal + (HASH === 'mega' ? 0 : HASH === 'lose' ? .3 : gauss() * .16); del.autoAim = rnd(-1.3, 1.3); }
         if (clock >= del.autoAt) press(del.autoAim, del.autoAt);

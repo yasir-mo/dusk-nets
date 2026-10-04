@@ -2,7 +2,7 @@
 
 A one-tap cricket batting game. Every chase is a fresh match at a new venue: reach the target in six balls and you travel to the next ground, where the target is higher. Lose three wickets or fall short and the tour is over. Your score is chases won.
 
-Nine venues, each with its own sky, weather and kits: Golden Dusk, Floodlit Night, Monsoon, Blossom Park, Desert Moon, Ice Cricket, Aurora, Neon City and Among the Stars.
+Eleven venues in a random order, each with its own skyline, weather and kits: a village green with a pavilion, a floodlit bowl, misty monsoon hills, cherry blossoms, desert dunes on a matting pitch, beach cricket with a tennis ball, a city arena under a skyline, the Alps on snow, an aurora over pine forest, a neon synthwave grid and a lunar ground with Earth overhead.
 
 **Play:** https://yasir-mo.github.io/dusk-nets/
 
