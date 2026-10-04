@@ -1,6 +1,8 @@
 # Dusk Nets
 
-A one-tap cricket batting game under the floodlights. Every over sets a run chase: reach the target in six balls and the next over asks for more. Lose three wickets or fall short and the innings ends.
+A one-tap cricket batting game. Every chase is a fresh match at a new venue: reach the target in six balls and you travel to the next ground, where the target is higher. Lose three wickets or fall short and the tour is over. Your score is chases won.
+
+Nine venues, each with its own sky, weather and kits: Golden Dusk, Floodlit Night, Monsoon, Blossom Park, Desert Moon, Ice Cricket, Aurora, Neon City and Among the Stars.
 
 **Play:** https://yasir-mo.github.io/dusk-nets/
 
